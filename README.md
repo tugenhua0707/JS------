@@ -169,3 +169,49 @@ JS------
        tarrs.push(test[n].itemId);
      }
      console.log(tarrs);
+     
+五： ajax跨域问题：
+
+     由于游览器的同源策略的问题 abc.example.com 的js代码不能调用def.example.com的代码，所以存在跨域问题 我们常见的解决
+     跨域问题有 jsonp 通过get方式，但是get请求参数只能带2kb(在IE游览器下)，当要带很多数据时候 特别一些数据非常重要的时候
+     那么我们会想到用post请求。下面我们先来谈谈jsonp的原理吧： 比如在abc.example.com向 def.example.com发一个请求，那么
+     def.example.com会返回一个callback({}) 这样的形式给我们页面 我们全局页面正好有个这样的函数 可以立即调用。
+     
+     下面我们来看看主域相同 子域不同的情况下怎么通过post请求跨域的问题，当然全局跨域只能用flash （在kissy框架下）
+     首先我们在本地测试需要分别绑定 abc.example.com 127.0.0.1  和 def.example.com 127.0.0.1  
+     用了个代理页面：在代理页面里设置父级域名相同即可.
+     
+     然后在subdomain.html代码如下：
+     
+     <div class="aa">aa</div>
+     
+     首先发生post IO请求 
+     
+     document.domain = "example.com";  指向同个主域
+     
+	KISSY.Event.on('.aa','click',function(){
+		KISSY.io({
+			url:"http://def.example.com/ajax/subdomain2.html",
+			xdr:{
+				subDomain:{
+					proxy:'/ajax/sub_domain_proxy.html'
+				}
+			},
+			type:'post',
+			success: function(data){
+				console.log(data);
+			}
+		});
+	});
+	
+     subdomain2.html 假如这样的：
+     
+     <script type="text/javascript">
+	console.log(1);
+    </script>
+     
+    sub_domain_proxy.html 如下：
+    
+    <script type="text/javascript">
+	 document.domain = "example.com";
+   </script>
