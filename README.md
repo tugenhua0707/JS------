@@ -130,3 +130,42 @@ JS------
       console.log(sorting(shopId,callId));
 
 
+  但是如果是这样的两个数组 ：  
+  
+  var shopId = ['001','002','003','004'],
+      callId = ['004','003','002','001'];
+      
+   callId 我想根据shopId排序 这样的问题该怎么解决？我倒现在没有更好的办法 只想到一种方法，但是对性能不是最好的，暂时
+   只能解决这个问题，思路还是和上面的一样的，首先把要排序的数组转换为对象 然后就根据上面的方法 对象根据数组的排序问题
+   进行排序，那么最后获取对应的值 再进行一次循环 分别放入数组里面去 最终这个数组就是我们想要的值。
+   
+   代码如下：
+   
+   var sorting = function(shopId,callId){
+   
+       var obj = {},
+				ret = [];
+      for(var i = 0, ilen = shopId.length; i < ilen; i+=1){
+         obj[shopId[i]] = i;
+       }
+
+      for(var j = 0, jlen = callId.length; j < jlen; j+=1){
+         ret.push({'itemId':callId[j]});
+       }
+
+      for(var k = 0, klen = ret.length; k < klen; k+=1){
+          var curItem = ret[k];
+          curItem._id = obj[curItem.itemId];
+       }
+       
+      var compareId = ret.sort(function(a,b){
+           return a._id - b._id;
+      });
+       return compareId;
+    };
+     var test = sorting(shopId,callId);
+     var tarrs = [];
+     for(var n = 0, nlen = test.length; n < nlen; n+=1){
+       tarrs.push(test[n].itemId);
+     }
+     console.log(tarrs);
