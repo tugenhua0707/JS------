@@ -67,6 +67,66 @@ JS------
      })
      
   
-     
-     
+四：对象根据数组排序的问题。
+    
+    有时候我们有这么样的一个需求 向服务器发一个请求 带参数 商品ID 数组传过去 但是后台返回一个数组 里面是以对象的形式存在
+    时候，由于后台开发人员懒的缘故，没有给我们排序，而我们前端需求是向服务器请求参数的顺序传过去 返回的后顺序和传过去一
+    样的顺序。
+    
+    比如这么一个数组：var shopId = ['001','002','003','004']; 服务器返回的如下：
+    
+    var  callId = [
+            {
+               'itemId': '003'
+            },
+            {
+                'itemId': '004'
+            },
+            {
+               'itemId': '002'
+            },
+            {
+               'itemId': '001'
+            }];
             
+   但是我是想返回的顺序是：
+     
+     var  callId = [
+            {
+               'itemId': '001'
+            },
+            {
+                'itemId': '002'
+            },
+            {
+               'itemId': '003'
+            },
+            {
+               'itemId': '004'
+            }];
+     
+     这样的。 代码可以这样写：
+     
+     var sorting = function(shopId,callId){
+
+         var obj = {};
+         
+         for(var i = 0, ilen = shopId.length; i < ilen; i+=1){
+            obj[shopId[i]] = i;
+         }
+
+        for(var j = 0, jlen = callId.length; j < jlen; j+=1){
+            var curItem = callId[j];
+            curItem._id = obj[curItem.itemId];
+         }
+         
+         var compareId = callId.sort(function(a,b){
+              return a._id - b._id;
+         });
+         
+         return compareId;
+      };
+      
+      console.log(sorting(shopId,callId));
+
+
